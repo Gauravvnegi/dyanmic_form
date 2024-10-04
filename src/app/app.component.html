@@ -1,0 +1,73 @@
+<h1>Dynamic</h1>
+
+<form [formGroup]="dynamicForm" (ngSubmit)="submit()">
+
+  <div>
+    <label for="name">Name</label>
+    <input id="name" formControlName="name" placeholder="Enter your name">
+    <div *ngIf="dynamicForm.get('name').touched && dynamicForm.get('name').invalid">
+      Name is required.
+    </div>
+    <br><br>
+    <label for="email">Email</label>
+    <input id="email" formControlName="email" placeholder="Enter your email">
+    <div *ngIf="dynamicForm.get('email').touched && dynamicForm.get('email').invalid">
+      Valid email is required.
+    </div>
+    <label for="number">Number</label>
+    <input id="number" formControlName="number" placeholder="Enter your number">
+    <div *ngIf="dynamicForm.get('number').touched && dynamicForm.get('number').invalid">
+      Valid number is required.
+    </div>
+  </div>
+  <br><br>
+
+  <div formArrayName="fields">
+    <div *ngFor="let field of fields.controls; let i = index" [formGroupName]="i">
+
+      <label for="label">Field Label</label>
+      <input formControlName="label" placeholder="Enter field label">
+      <div *ngIf="field.get('label').touched && field.get('label').invalid">
+        Field label is required.
+      </div>
+
+      <label for="type">Field Type</label>
+      <select formControlName="type">
+        <option value="text">Text</option>
+        <option value="number">Number</option>
+        <option value="password">Password</option>
+        <option value="date">Date</option>
+      </select>
+
+      <label for="value">Value</label>
+      <input [type]="field.get('type').value" formControlName="value" placeholder="Enter value">
+      <div *ngIf="field.get('value').touched && field.get('value').invalid">
+        Value is required.
+      </div>
+
+      <button type="button" (click)="removeField(i)">Remove</button>
+    </div>
+  </div>
+
+  <button type="button" (click)="addField()">Add Field</button>
+  <button type="submit" [disabled]="dynamicForm.invalid">Submit</button>
+</form>
+
+<div *ngIf="savedData.length > 0; else noData">
+  <h2>Saved Data</h2>
+  <div *ngFor="let data of savedData; let i = index">
+    <p>Name: {{ data.name }}</p>
+    <p>Email: {{ data.email }}</p>
+    <p>Number: {{ data.number }}</p>
+    <div *ngFor="let field of data.fields">
+      <p>{{ field.label }}: {{ field.value }}</p>
+    </div>
+    <button>Remove</button>
+    <button>edit</button>
+    <hr>
+  </div>
+</div>
+
+<ng-template #noData>
+  <p>No Data Found</p>
+</ng-template>
